@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>🐯 Tigre da Sorte</title>
+  <style>
+    body {
+      text-align: center;
+      font-family: Arial;
+      background: black;
+      color: gold;
+    }
+
+    #box {
+      margin-top: 50px;
+      border: 3px solid gold;
+      padding: 30px;
+      border-radius: 20px;
+      display: inline-block;
+      animation: piscar 2s infinite;
+    }
+
+    @keyframes piscar {
+      0% { box-shadow: 0 0 10px gold; }
+      50% { box-shadow: 0 0 30px orange; }
+      100% { box-shadow: 0 0 10px gold; }
+    }
+
+    #slot {
+      font-size: 60px;
+      margin: 20px;
+    }
+
+    button {
+      padding: 15px 30px;
+      font-size: 18px;
+      background: gold;
+      border: none;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<div id="box">
+  <h1>🐯 Tigre da Sorte</h1>
+  <h2>Saldo: <span id="saldo">100</span></h2>
+  <h3>Nível: <span id="nivel">1</span></h3>
+
+  <div id="slot">❓❓❓</div>
+
+  <button onclick="girar()">GIRAR</button>
+
+  <h2 id="resultado"></h2>
+</div>
+
+<audio id="winSound" src="https://www.soundjay.com/buttons/sounds/button-3.mp3"></audio>
+
+<script>
+let saldo = 100;
+let nivel = 1;
+let giros = 0;
+let emojis = ["🐯","💎","🔥","🍀","⭐"];
+
+function girar() {
+  if (saldo < 10) {
+    resultado("💀 Sem saldo!");
+    return;
+  }
+
+  saldo -= 10;
+  giros++;
+
+  let anim = setInterval(() => {
+    mostrarAleatorio();
+  }, 100);
+
+  setTimeout(() => {
+    clearInterval(anim);
+
+    let a = rand();
+    let b = rand();
+    let c = rand();
+
+    mostrar(a,b,c);
+
+    if (a === b && b === c) {
+      let premio = 100 + (nivel * 20);
+      saldo += premio;
+      tocarSom();
+      resultado("🎉 JACKPOT +" + premio);
+    } else if (Math.random() < 0.2) {
+      saldo += 30;
+      resultado("🎁 BÔNUS +30!");
+    } else if (Math.random() < 0.1) {
+      saldo += 60;
+      resultado("⚡ SURPRESA +60!");
+    } else {
+      resultado("😢 Tente novamente");
+    }
+
+    if (giros % 10 === 0) {
+      nivel++;
+      resultado("⬆️ Subiu de nível! Agora nível " + nivel);
+    }
+
+    atualizar();
+
+  }, 2000);
+}
+
+function rand() {
+  return emojis[Math.floor(Math.random()*emojis.length)];
+}
+
+function mostrar(a,b,c) {
+  document.getElementById("slot").innerHTML = a + " " + b + " " + c;
+}
+
+function mostrarAleatorio() {
+  mostrar(rand(),rand(),rand());
+}
+
+function resultado(txt) {
+  document.getElementById("resultado").innerHTML = txt;
+}
+
+function atualizar() {
+  document.getElementById("saldo").innerHTML = saldo;
+  document.getElementById("nivel").innerHTML = nivel;
+}
+
+function tocarSom() {
+  document.getElementById("winSound").play();
+}
+</script>
+
+</body>
+</html>
