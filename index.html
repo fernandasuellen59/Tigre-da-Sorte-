@@ -1,136 +1,175 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-br">
 <head>
-  <title>🐯 Tigre da Sorte</title>
-  <style>
-    body {
-      text-align: center;
-      font-family: Arial;
-      background: black;
-      color: gold;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plataforma 777</title>
 
-    #box {
-      margin-top: 50px;
-      border: 3px solid gold;
-      padding: 30px;
-      border-radius: 20px;
-      display: inline-block;
-      animation: piscar 2s infinite;
-    }
+<style>
+body {
+  margin: 0;
+  font-family: Arial;
+  background: #0d1b2a;
+  color: white;
+}
 
-    @keyframes piscar {
-      0% { box-shadow: 0 0 10px gold; }
-      50% { box-shadow: 0 0 30px orange; }
-      100% { box-shadow: 0 0 10px gold; }
-    }
+.tela { display: none; padding: 20px; }
+.ativa { display: block; }
 
-    #slot {
-      font-size: 60px;
-      margin: 20px;
-    }
+.topo {
+  display: flex;
+  justify-content: space-between;
+  padding: 15px;
+  background: #00000050;
+}
 
-    button {
-      padding: 15px 30px;
-      font-size: 18px;
-      background: gold;
-      border: none;
-      border-radius: 10px;
-    }
-  </style>
+.saldo {
+  background: #1e90ff;
+  padding: 5px 15px;
+  border-radius: 10px;
+}
+
+.menu {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  background: #00000090;
+  padding: 10px 0;
+}
+
+.card {
+  background: #ffffff10;
+  padding: 15px;
+  border-radius: 10px;
+  margin-top: 10px;
+}
+
+button {
+  padding: 15px;
+  border: none;
+  border-radius: 10px;
+  background: gold;
+  margin-top: 10px;
+}
+
+/* SLOT */
+.slots {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.slot {
+  width: 80px;
+  height: 80px;
+  background: #ffffff20;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 40px;
+  border-radius: 10px;
+}
+</style>
 </head>
+
 <body>
 
-<div id="box">
-  <h1>🐯 Tigre da Sorte</h1>
-  <h2>Saldo: <span id="saldo">100</span></h2>
-  <h3>Nível: <span id="nivel">1</span></h3>
-
-  <div id="slot">❓❓❓</div>
-
-  <button onclick="girar()">GIRAR</button>
-
-  <h2 id="resultado"></h2>
+<div class="topo">
+  <h3>🎰 Cassino</h3>
+  <div class="saldo">💰 <span id="saldo">100</span></div>
 </div>
 
-<audio id="winSound" src="https://www.soundjay.com/buttons/sounds/button-3.mp3"></audio>
+<!-- INICIO -->
+<div id="inicio" class="tela ativa">
+  <h2>Bem-vindo</h2>
+
+  <div class="card">
+    💰 Comprar moedas:
+    <br>
+    <button onclick="comprar(50)">R$5 = 50 moedas</button>
+    <button onclick="comprar(100)">R$10 = 100 moedas</button>
+  </div>
+</div>
+
+<!-- JOGOS -->
+<div id="jogos" class="tela">
+  <h2>🎮 Slot</h2>
+
+  <div class="slots">
+    <div class="slot" id="s1">🍒</div>
+    <div class="slot" id="s2">🍋</div>
+    <div class="slot" id="s3">🍉</div>
+  </div>
+
+  <button onclick="girar()">GIRAR (-10)</button>
+  <p id="msg"></p>
+</div>
+
+<!-- PERFIL -->
+<div id="perfil" class="tela">
+  <h2>👤 Perfil</h2>
+  <div class="card">Saldo: <span id="saldoPerfil">100</span></div>
+</div>
+
+<!-- MENU -->
+<div class="menu">
+  <div onclick="trocarTela('inicio')">🏠<br>Início</div>
+  <div onclick="trocarTela('jogos')">🎮<br>Jogos</div>
+  <div onclick="trocarTela('perfil')">👤<br>Perfil</div>
+</div>
 
 <script>
-let saldo = 100;
-let nivel = 1;
-let giros = 0;
-let emojis = ["🐯","💎","🔥","🍀","⭐"];
+let saldo = localStorage.getItem("saldo") || 100;
 
-function girar() {
-  if (saldo < 10) {
-    resultado("💀 Sem saldo!");
+atualizar();
+
+function atualizar(){
+  document.getElementById("saldo").innerText = saldo;
+  document.getElementById("saldoPerfil").innerText = saldo;
+}
+
+function trocarTela(tela){
+  document.querySelectorAll(".tela").forEach(t => t.classList.remove("ativa"));
+  document.getElementById(tela).classList.add("ativa");
+}
+
+function comprar(valor){
+  alert("Pagamento simulado aprovado ✅");
+  saldo = parseInt(saldo) + valor;
+  localStorage.setItem("saldo", saldo);
+  atualizar();
+}
+
+function girar(){
+  if(saldo < 10){
+    alert("Sem moedas!");
     return;
   }
 
   saldo -= 10;
-  giros++;
 
-  let anim = setInterval(() => {
-    mostrarAleatorio();
-  }, 100);
+  const simbolos = ["🍒","🍋","🍉","💎","7️⃣"];
 
-  setTimeout(() => {
-    clearInterval(anim);
+  let s1 = simbolos[Math.floor(Math.random()*simbolos.length)];
+  let s2 = simbolos[Math.floor(Math.random()*simbolos.length)];
+  let s3 = simbolos[Math.floor(Math.random()*simbolos.length)];
 
-    let a = rand();
-    let b = rand();
-    let c = rand();
+  document.getElementById("s1").innerText = s1;
+  document.getElementById("s2").innerText = s2;
+  document.getElementById("s3").innerText = s3;
 
-    mostrar(a,b,c);
+  if(s1 === s2 && s2 === s3){
+    saldo += 50;
+    document.getElementById("msg").innerText = "🔥 GANHOU!";
+  } else {
+    document.getElementById("msg").innerText = "Tente novamente";
+  }
 
-    if (a === b && b === c) {
-      let premio = 100 + (nivel * 20);
-      saldo += premio;
-      tocarSom();
-      resultado("🎉 JACKPOT +" + premio);
-    } else if (Math.random() < 0.2) {
-      saldo += 30;
-      resultado("🎁 BÔNUS +30!");
-    } else if (Math.random() < 0.1) {
-      saldo += 60;
-      resultado("⚡ SURPRESA +60!");
-    } else {
-      resultado("😢 Tente novamente");
-    }
-
-    if (giros % 10 === 0) {
-      nivel++;
-      resultado("⬆️ Subiu de nível! Agora nível " + nivel);
-    }
-
-    atualizar();
-
-  }, 2000);
-}
-
-function rand() {
-  return emojis[Math.floor(Math.random()*emojis.length)];
-}
-
-function mostrar(a,b,c) {
-  document.getElementById("slot").innerHTML = a + " " + b + " " + c;
-}
-
-function mostrarAleatorio() {
-  mostrar(rand(),rand(),rand());
-}
-
-function resultado(txt) {
-  document.getElementById("resultado").innerHTML = txt;
-}
-
-function atualizar() {
-  document.getElementById("saldo").innerHTML = saldo;
-  document.getElementById("nivel").innerHTML = nivel;
-}
-
-function tocarSom() {
-  document.getElementById("winSound").play();
+  localStorage.setItem("saldo", saldo);
+  atualizar();
 }
 </script>
 
